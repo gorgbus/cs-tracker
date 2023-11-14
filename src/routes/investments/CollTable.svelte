@@ -50,8 +50,9 @@
 
 	const columns = table.createColumns([
 		table.column({
-			accessor: "icon_url",
+			accessor: ({ item }) => item,
 			header: "",
+			id: "image",
 			cell: ({ value }) =>
 				createRender(Img, {
 					market_hash_name: value
@@ -185,8 +186,8 @@
 							<Subscribe attrs={cell.attrs()} let:attrs>
 								<Table.Cell
 									{...attrs}
-									class={cell.id === "icon_url"
-										? "min-w-[106px] w-[106px]"
+									class={cell.id === "image"
+										? "min-w-[130px] w-[130px]"
 										: cell.id === "item"
 										? "min-w-[250px]"
 										: ""}
