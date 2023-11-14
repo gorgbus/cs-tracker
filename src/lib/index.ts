@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL, PUBLIC_APP_ID } from "$env/static/public";
+import { PUBLIC_API_URL, PUBLIC_APP_ID, PUBLIC_AUTH_URL } from "$env/static/public";
 import axios from "axios";
 
 // place files you want to import through the `$lib` alias in this folder.
@@ -35,7 +35,7 @@ axios_client.interceptors.response.use(
 				config._retry = true;
 
 				await axios.post(
-					`http://localhost:6969/auth/${PUBLIC_APP_ID}/token/refresh`,
+					`${PUBLIC_AUTH_URL}/auth/${PUBLIC_APP_ID}/token/refresh`,
 					{},
 					{
 						withCredentials: true
