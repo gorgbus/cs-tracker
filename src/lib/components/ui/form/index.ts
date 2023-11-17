@@ -19,7 +19,6 @@ import Button from "./form-button.svelte";
 
 const Root = FormPrimitive.Root;
 const Field = FormPrimitive.Field;
-const Control = FormPrimitive.Control;
 const RadioItem = RadioGroupComp.Item;
 const NativeRadio = FormPrimitive.Radio;
 const SelectContent = SelectComp.Content;
@@ -35,7 +34,6 @@ export type TextareaGetFormField = Omit<ReturnType<typeof getFormField>, "value"
 export {
 	Root,
 	Field,
-	Control,
 	Item,
 	Input,
 	NumberInput,

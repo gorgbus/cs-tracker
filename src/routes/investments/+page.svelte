@@ -13,7 +13,6 @@
 	import { buttonVariants } from "$lib/components/ui/button";
 	import { superForm } from "sveltekit-superforms/client";
 	import { axios_client } from "$lib";
-	import Root from "postcss/lib/root";
 	import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
 
 	const collections_query = useQuery("collections", fetch_collections);
