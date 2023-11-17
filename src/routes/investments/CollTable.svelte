@@ -10,8 +10,10 @@
 	import CollTableActions from "./CollTableActions.svelte";
 	import { getContext } from "svelte";
 	import { addTableFilter } from "svelte-headless-table/plugins";
+	import type { PageData } from "./$types";
 
 	export let col_id: number;
+	export let data: PageData;
 
 	const invest_query = useQuery(["investments", col_id], async () => {
 		const { data } = await axios_client.get<{ investments: InvestmentType[] }>(
@@ -148,8 +150,7 @@
 		table.column({
 			accessor: (item) => item,
 			header: "",
-			cell: ({ value }) =>
-				createRender(CollTableActions, { id: value.inv_id, name: value.item, col_id })
+			cell: ({ value }) => createRender(CollTableActions, { investment: value, data })
 		})
 	]);
 
@@ -162,43 +163,57 @@
 </script>
 
 <div class="rounded-md border-2 border-input mx-2">
-	<Table.Root {...$tableAttrs}>
-		<Table.Header class="border-b-2 border-input">
-			{#each $headerRows as headerRow}
-				<Subscribe rowAttrs={headerRow.attrs()}>
-					<Table.Row class="hover:bg-secondary/80">
-						{#each headerRow.cells as cell (cell.id)}
-							<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()}>
-								<Table.Head {...attrs} class="text-primary-foreground font-bold">
-									<Render of={cell.render()} />
-								</Table.Head>
-							</Subscribe>
-						{/each}
-					</Table.Row>
-				</Subscribe>
-			{/each}
-		</Table.Header>
-		<Table.Body {...$tableBodyAttrs}>
-			{#each $pageRows as row (row.id)}
-				<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-					<Table.Row {...rowAttrs} class="border-input border-b-2 hover:bg-secondary/80">
-						{#each row.cells as cell (cell.id)}
-							<Subscribe attrs={cell.attrs()} let:attrs>
-								<Table.Cell
-									{...attrs}
-									class={cell.id === "image"
-										? "min-w-[130px] w-[130px]"
-										: cell.id === "item"
-										? "min-w-[250px]"
-										: ""}
-								>
-									<Render of={cell.render()} />
-								</Table.Cell>
-							</Subscribe>
-						{/each}
-					</Table.Row>
-				</Subscribe>
-			{/each}
-		</Table.Body>
-	</Table.Root>
+	{#if $invest_query.isSuccess}
+		<Table.Root {...$tableAttrs}>
+			<Table.Header class="border-b-2 border-input">
+				{#each $headerRows as headerRow}
+					<Subscribe rowAttrs={headerRow.attrs()}>
+						<Table.Row class="hover:bg-secondary/80">
+							{#each headerRow.cells as cell (cell.id)}
+								<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()}>
+									<Table.Head {...attrs} class="text-primary-foreground font-bold">
+										<Render of={cell.render()} />
+									</Table.Head>
+								</Subscribe>
+							{/each}
+						</Table.Row>
+					</Subscribe>
+				{/each}
+			</Table.Header>
+			<Table.Body {...$tableBodyAttrs}>
+				{#each $pageRows as row (row.id)}
+					<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
+						<Table.Row {...rowAttrs} class="border-input border-b-2 hover:bg-secondary/80">
+							{#each row.cells as cell (cell.id)}
+								<Subscribe attrs={cell.attrs()} let:attrs>
+									<Table.Cell
+										{...attrs}
+										class={cell.id === "image"
+											? "min-w-[130px] w-[130px]"
+											: cell.id === "item"
+											? "min-w-[250px]"
+											: ""}
+									>
+										<Render of={cell.render()} />
+									</Table.Cell>
+								</Subscribe>
+							{/each}
+						</Table.Row>
+					</Subscribe>
+				{/each}
+			</Table.Body>
+		</Table.Root>
+	{:else if $invest_query.isError}
+		<div
+			class="flex justify-center items-center text-primary-foreground text-xl font-semibold h-60 w-full"
+		>
+			Something went wrong
+		</div>
+	{:else}
+		<div
+			class="flex justify-center items-center text-primary-foreground text-xl font-semibold h-60 w-full"
+		>
+			Loading...
+		</div>
+	{/if}
 </div>

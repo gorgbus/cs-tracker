@@ -1,15 +1,20 @@
 import { axios_client } from "$lib";
 
+export enum Currencies {
+	USD = "USD",
+	EUR = "EUR",
+	CNY = "CNY"
+}
+
 export type InvestmentType = {
 	inv_id: number;
 	steam_id: string;
 	item: string;
-	icon_url: string;
 	collection: number;
 	col_name: string;
 	cost: number;
 	amount: number;
-	currency: "USD" | "EUR" | "CNY";
+	currency: Currencies;
 };
 
 export type Collection = {
@@ -52,4 +57,15 @@ export const fetch_collections = async () => {
 	);
 
 	return data;
+};
+
+export const get_currency_symbol = (currency: Currencies) => {
+	switch (currency) {
+		case Currencies.USD:
+			return "$";
+		case Currencies.EUR:
+			return "€";
+		case Currencies.CNY:
+			return "¥";
+	}
 };

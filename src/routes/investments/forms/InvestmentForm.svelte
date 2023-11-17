@@ -1,20 +1,20 @@
 <script lang="ts">
 	import * as Form from "$lib/components/ui/form";
 	import * as Dialog from "$lib/components/ui/dialog";
-	import { invFormSchema, type InvFormSchema } from "./schema";
+	import { invFormSchema, type InvFormSchema } from "../schema";
 	import type { SuperValidated } from "sveltekit-superforms";
 
 	export let col_id: number;
 	export let form: SuperValidated<InvFormSchema>;
 </script>
 
-<Form.Root
-	method="POST"
-	action={`?/inv_create&col_id=${col_id}`}
-	{form}
-	schema={invFormSchema}
-	let:config
->
+<Form.Root method="POST" action={`?/inv_create`} {form} schema={invFormSchema} let:config>
+	<Form.Field {config} name="col_id">
+		<Form.Item class="hidden">
+			<Form.NumberInput prefill={col_id} />
+		</Form.Item>
+	</Form.Field>
+
 	<Form.Field {config} name="market_hash_name">
 		<Form.Item>
 			<Form.Label>Name</Form.Label>

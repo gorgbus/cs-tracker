@@ -6,26 +6,31 @@
 	import * as ContextMenu from "$lib/components/ui/context-menu";
 	import * as AlertDialog from "$lib/components/ui/alert-dialog";
 	import TableWrapper from "./TableWrapper.svelte";
-	import CollForm from "./CollForm.svelte";
+	import CollForm from "./forms/CollForm.svelte";
+	import EditCollForm from "./forms/EditCollForm.svelte";
 	import type { PageData } from "./$types";
 	import { cn } from "$lib/utils";
 	import { buttonVariants } from "$lib/components/ui/button";
 	import { superForm } from "sveltekit-superforms/client";
 	import { axios_client } from "$lib";
+	import Root from "postcss/lib/root";
+	import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
 
 	const collections_query = useQuery("collections", fetch_collections);
 
 	export let data: PageData;
 
 	const { message } = superForm(data.coll_form);
+	const { message: rename_message } = superForm(data.coll_edit_form);
 
 	const query_client = useQueryClient();
 
-	$: if ($message === "success") {
+	$: if ($message?.type === "success" || $rename_message?.type === "success") {
 		(async () => {
 			await query_client.invalidateQueries("collections");
 
 			$message = undefined;
+			$rename_message = undefined;
 		})();
 	}
 
@@ -63,28 +68,69 @@
 
 {#if $collections_query.isSuccess}
 	{#each $collections_query.data.collections as collection}
-		<ContextMenu.Root>
-			<ContextMenu.Trigger>
-				<Accordion.Root class="px-8 py-2">
-					<Accordion.Item value={`${collection.col_id}`}>
-						<Accordion.Trigger class="font-bold">{collection.name}</Accordion.Trigger>
-						<Accordion.Content>
-							<TableWrapper {collection} {data} />
-						</Accordion.Content>
-					</Accordion.Item>
-				</Accordion.Root>
-			</ContextMenu.Trigger>
-			<ContextMenu.Content>
-				<ContextMenu.Item
-					class="text-red-500 data-[highlighted]:bg-red-500 data-[highlighted]:text-primary-foreground"
-					on:click={() => {
-						open = !open;
-						coll = collection;
-					}}>Remove</ContextMenu.Item
-				>
-			</ContextMenu.Content>
-		</ContextMenu.Root>
+		<Accordion.Root class="px-8 py-2">
+			<Accordion.Item value={`${collection.col_id}`}>
+				<Dialog.Root open={data.coll_edit_form.posted && false}>
+					<ContextMenu.Root>
+						<ContextMenu.Trigger>
+							<Accordion.Trigger class="font-bold">{collection.name}</Accordion.Trigger>
+						</ContextMenu.Trigger>
+						<ContextMenu.Content>
+							<ContextMenu.Group>
+								<ContextMenu.Label>Actions</ContextMenu.Label>
+								<Dialog.Trigger class="w-full">
+									<ContextMenu.Item>Rename</ContextMenu.Item>
+								</Dialog.Trigger>
+							</ContextMenu.Group>
+							<ContextMenu.Separator />
+							<ContextMenu.Item
+								class="text-red-500 data-[highlighted]:bg-red-500 data-[highlighted]:text-primary-foreground"
+								on:click={() => {
+									open = !open;
+									coll = collection;
+								}}>Remove</ContextMenu.Item
+							>
+						</ContextMenu.Content>
+					</ContextMenu.Root>
+					<Dialog.Content class="border-input">
+						<Dialog.Header>
+							<Dialog.Title>Rename collection</Dialog.Title>
+							<Dialog.Description>Rename <strong>{collection.name}</strong></Dialog.Description>
+						</Dialog.Header>
+
+						<EditCollForm form={data.coll_edit_form} coll={collection} />
+					</Dialog.Content>
+				</Dialog.Root>
+				<Accordion.Content>
+					<TableWrapper {collection} {data} />
+				</Accordion.Content>
+			</Accordion.Item>
+		</Accordion.Root>
 	{/each}
+{:else}
+	<Accordion.Root class="px-8 py-2">
+		<Accordion.Item value="placeholder">
+			<Accordion.Trigger disabled>
+				<Skeleton class="h-5 w-40" />
+			</Accordion.Trigger>
+		</Accordion.Item>
+	</Accordion.Root>
+
+	<Accordion.Root class="px-8 py-2">
+		<Accordion.Item value="placeholder">
+			<Accordion.Trigger disabled>
+				<Skeleton class="h-5 w-48" />
+			</Accordion.Trigger>
+		</Accordion.Item>
+	</Accordion.Root>
+
+	<Accordion.Root class="px-8 py-2">
+		<Accordion.Item value="placeholder">
+			<Accordion.Trigger disabled>
+				<Skeleton class="h-5 w-40" />
+			</Accordion.Trigger>
+		</Accordion.Item>
+	</Accordion.Root>
 {/if}
 
 <AlertDialog.Root {open} onOpenChange={(o) => (open = o ? o : false)}>

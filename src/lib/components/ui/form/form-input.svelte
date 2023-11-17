@@ -3,15 +3,21 @@
 	import type { HTMLInputAttributes } from "svelte/elements";
 	import { Input, type InputEvents } from "$lib/components/ui/input";
 
-	type $$Props = HTMLInputAttributes;
+	export let prefill: string | undefined = undefined;
+
+	interface $$Props extends HTMLInputAttributes {
+		prefill?: string;
+	}
 	type $$Events = InputEvents;
 
-	const { attrStore, value } = getFormField();
+	const { attrStore, setValue } = getFormField();
+
+	$: setValue(prefill);
 </script>
 
 <Input
 	{...$attrStore}
-	bind:value={$value}
+	bind:value={prefill}
 	{...$$restProps}
 	on:blur
 	on:change

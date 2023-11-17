@@ -14,7 +14,7 @@
 	import { cn } from "$lib/utils";
 	import type { Collection } from "./investment";
 	import type { PageData } from "./$types";
-	import InvestmentForm from "./InvestmentForm.svelte";
+	import InvestmentForm from "./forms/InvestmentForm.svelte";
 	import { useQueryClient } from "@sveltestack/svelte-query";
 	import { superForm } from "sveltekit-superforms/client";
 
@@ -84,7 +84,7 @@
 
 	const { message } = superForm(data.inv_form);
 
-	$: if ($message === "success") {
+	$: if ($message?.type === "success") {
 		(async () => {
 			await query_client.invalidateQueries({
 				queryKey: ["investments", collection.col_id]
@@ -190,4 +190,4 @@
 	</div>
 </div>
 
-<CollTable col_id={collection.col_id} />
+<CollTable {data} col_id={collection.col_id} />

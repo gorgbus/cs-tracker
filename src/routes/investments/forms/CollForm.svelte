@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Form from "$lib/components/ui/form";
 	import * as Dialog from "$lib/components/ui/dialog";
-	import { collFormSchema, type CollFormSchema } from "./schema";
+	import { collFormSchema, type CollFormSchema } from "../schema";
 	import type { SuperValidated } from "sveltekit-superforms";
 
 	export let form: SuperValidated<CollFormSchema>;
