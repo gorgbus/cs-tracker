@@ -2,6 +2,7 @@
 	import { getFormField } from "formsnap";
 	import type { HTMLInputAttributes } from "svelte/elements";
 	import { Input, type InputEvents } from "$lib/components/ui/input";
+	import { onDestroy, onMount } from "svelte";
 
 	export let prefill: number | undefined = undefined;
 
@@ -10,14 +11,24 @@
 	}
 	type $$Events = InputEvents;
 
-	const { attrStore, setValue } = getFormField();
+	const { attrStore, value, setValue } = getFormField();
 
-	$: setValue(Number(prefill));
+	let val_sub = () => {};
+
+	onMount(() => {
+		setValue(prefill);
+
+		val_sub = value.subscribe((v) => value.set(Number(v)));
+	});
+
+	onDestroy(() => {
+		val_sub();
+	});
 </script>
 
 <Input
 	{...$attrStore}
-	bind:value={prefill}
+	bind:value={$value}
 	type="number"
 	{...$$restProps}
 	on:blur
