@@ -58,10 +58,10 @@
 	};
 
 	const calc_perc_gain = (amount: number, latest_price: number, cost: number) => {
-		const current_worth = calc_curr_worth(amount, latest_price);
+		const current_worth = calc_curr_worth(amount, convert_price(latest_price, item.currency));
 		const total_cost = calc_total_cost(amount, cost);
 
-		return current_worth.minus(total_cost).div(total_cost).mul(100).floor().toNumber();
+		return current_worth.minus(total_cost).div(total_cost).mul(100).round().toNumber();
 	};
 
 	const convert_price = (price: number, currency: "USD" | "EUR" | "CNY") => {

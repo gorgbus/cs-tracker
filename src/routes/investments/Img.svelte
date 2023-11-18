@@ -5,8 +5,6 @@
 	export let market_hash_name: string;
 
 	let loaded = false;
-
-	$: console.log(loaded);
 </script>
 
 <div class="relative">
