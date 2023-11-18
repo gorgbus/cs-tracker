@@ -61,7 +61,7 @@
 		const current_worth = calc_curr_worth(amount, latest_price);
 		const total_cost = calc_total_cost(amount, cost);
 
-		return current_worth.mul(100).divToInt(total_cost).minus(100).toNumber();
+		return current_worth.minus(total_cost).div(total_cost).mul(100).floor().toNumber();
 	};
 
 	const convert_price = (price: number, currency: "USD" | "EUR" | "CNY") => {
