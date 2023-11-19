@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { RequestHandler } from "./$types";
-import { PUBLIC_APP_ID, PUBLIC_AUTH_URL } from "$env/static/public";
+import { PUBLIC_APP_ID, PUBLIC_AUTH_URL, PUBLIC_DOMAIN } from "$env/static/public";
 import { redirect } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ cookies }) => {
@@ -17,8 +17,23 @@ export const GET: RequestHandler = async ({ cookies }) => {
 			}
 		);
 
-		cookies.delete("access", { path: "/" });
-		cookies.delete("refresh", { path: "/" });
+		cookies.delete("access");
+		cookies.delete("refresh");
+
+		cookies.delete("access", {
+			domain: PUBLIC_DOMAIN,
+			secure: true,
+			httpOnly: true,
+			sameSite: "lax",
+			path: "/"
+		});
+		cookies.delete("refresh", {
+			domain: PUBLIC_DOMAIN,
+			secure: true,
+			httpOnly: true,
+			sameSite: "lax",
+			path: "/"
+		});
 	} catch (err) {
 		console.error(err);
 	}
