@@ -56,6 +56,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	} else {
 		event.locals.user = undefined;
+
+		if (event.url.pathname === "investments" || event.url.pathname === "inventory")
+			return new Response(null, {
+				status: 303,
+				headers: {
+					location: "/"
+				}
+			});
 	}
 
 	return await resolve(event);
