@@ -4,8 +4,10 @@
 	import { formSchema, type FormSchema } from "./schema";
 	import type { SuperValidated } from "sveltekit-superforms";
 	import type { Collection } from "../investments/investment";
+	import type { Item } from "$lib";
 
 	export let collections: Collection[];
+	export let item: Item;
 	export let form: SuperValidated<FormSchema>;
 </script>
 
@@ -13,7 +15,7 @@
 	<Form.Field {config} name="market_hash_name">
 		<Form.Item>
 			<Form.Label>Name</Form.Label>
-			<Form.Input class="pointer-events-none" tabindex={-1} />
+			<Form.Input prefill={item.market_hash_name} class="pointer-events-none" tabindex={-1} />
 			<Form.Description>market hash name of the item</Form.Description>
 			<Form.Validation />
 		</Form.Item>
@@ -22,7 +24,7 @@
 	<Form.Field {config} name="cost">
 		<Form.Item>
 			<Form.Label>Cost</Form.Label>
-			<Form.NumberInput class="hide-arrows" step="0.01" />
+			<Form.NumberInput prefill={0.01} class="hide-arrows" step="0.01" />
 			<Form.Description>cost per each item</Form.Description>
 			<Form.Validation />
 		</Form.Item>
@@ -31,7 +33,7 @@
 	<Form.Field {config} name="amount">
 		<Form.Item>
 			<Form.Label>Amount</Form.Label>
-			<Form.NumberInput class="hide-arrows" />
+			<Form.NumberInput prefill={1} class="hide-arrows" />
 			<Form.Description>amount of items you want to add</Form.Description>
 			<Form.Validation />
 		</Form.Item>

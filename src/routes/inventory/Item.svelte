@@ -5,15 +5,14 @@
 </script>
 
 <div class="w-40 h-48">
-	<a
-		href={`/inventory?item=${item.market_hash_name}`}
+	<div
 		class="h-40 w-40 flex items-center bg-secondary border-2 border-accent cursor-pointer hover:bg-secondary/80 transition-all"
 	>
 		<img
 			src={`https://community.akamai.steamstatic.com/economy/image/${item.icon_url}/144fx144f`}
 			alt={item.name}
 		/>
-	</a>
+	</div>
 
 	<div class="h-8 w-full bg-secondary text-center">
 		<span

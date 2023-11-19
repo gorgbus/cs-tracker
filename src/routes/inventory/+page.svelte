@@ -42,7 +42,25 @@
 				{#each $query_result.data.items.filter((i) => i.market_hash_name
 						.toLowerCase()
 						.includes(search.toLowerCase())) as item}
-					<Item {item} />
+					<Dialog.Root open={data.form.posted && false}>
+						<Dialog.Trigger>
+							<Item {item} />
+						</Dialog.Trigger>
+						<Dialog.Content class="border-input">
+							<Dialog.Header>
+								<Dialog.Title>New investment</Dialog.Title>
+								<Dialog.Description>Add a new investment</Dialog.Description>
+							</Dialog.Header>
+
+							{#if $collections_query.isSuccess}
+								<InvestmentForm
+									{item}
+									form={data.form}
+									collections={$collections_query.data.collections}
+								/>
+							{/if}
+						</Dialog.Content>
+					</Dialog.Root>
 				{/each}
 			</div>
 		{:else if $query_result.isLoading}
@@ -61,16 +79,3 @@
 		{/if}
 	</div>
 </div>
-
-<Dialog.Root open={data.open}>
-	<Dialog.Content class="border-input">
-		<Dialog.Header>
-			<Dialog.Title>New investment</Dialog.Title>
-			<Dialog.Description>Add a new investment</Dialog.Description>
-		</Dialog.Header>
-
-		{#if $collections_query.isSuccess}
-			<InvestmentForm form={data.form} collections={$collections_query.data.collections} />
-		{/if}
-	</Dialog.Content>
-</Dialog.Root>

@@ -17,8 +17,8 @@ export const GET: RequestHandler = async ({ cookies }) => {
 			}
 		);
 
-		cookies.delete("access");
-		cookies.delete("refresh");
+		cookies.delete("access", { path: "/" });
+		cookies.delete("refresh", { path: "/" });
 	} catch (err) {
 		console.error(err);
 	}

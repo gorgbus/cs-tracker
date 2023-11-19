@@ -3,22 +3,11 @@ import { superValidate } from "sveltekit-superforms/server";
 import { formSchema } from "./schema";
 import { fail, redirect } from "@sveltejs/kit";
 import axios from "axios";
+import { PUBLIC_API_URL } from "$env/static/public";
 
-export const load: PageServerLoad = ({ url }) => {
-	const item = url.searchParams.get("item");
-	const added = url.searchParams.get("success");
-
+export const load: PageServerLoad = () => {
 	return {
-		form: superValidate(
-			{
-				market_hash_name: item || "",
-				cost: 0.01,
-				amount: 1
-			},
-			formSchema
-		),
-		open: item !== null && item !== undefined,
-		added: added !== null && added !== undefined
+		form: superValidate(formSchema)
 	};
 };
 
@@ -35,7 +24,7 @@ export const actions: Actions = {
 		try {
 			const access = event.cookies.get("access");
 
-			await axios.post(`http://127.0.0.1:4269/api/investment/create`, form.data, {
+			await axios.post(`${PUBLIC_API_URL}/api/investment/create`, form.data, {
 				headers: {
 					Cookie: `access=${access};`
 				}
@@ -48,6 +37,6 @@ export const actions: Actions = {
 			});
 		}
 
-		throw redirect(303, "/inventory?success");
+		throw redirect(303, "/inventory");
 	}
 };
