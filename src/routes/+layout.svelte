@@ -15,9 +15,9 @@
 </script>
 
 <div class="bg-background h-[100vh] overflow-x-hidden overflow-auto">
-	<div class="h-fit">
+	<div class="h-full flex flex-col">
 		<QueryClientProvider client={queryClient}>
-			<header>
+			<header class="flex-initial">
 				<nav class="bg-secondary flex justify-between items-center">
 					<button class="md:hidden ml-6" on:click={() => (dropdown_menu = !dropdown_menu)}>
 						{#if !dropdown_menu}

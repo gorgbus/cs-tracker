@@ -9,3 +9,8 @@
 		if (data.user) goto("/investments");
 	});
 </script>
+
+<div class="flex flex-col justify-center items-center text-center flex-auto text-2xl font-bold">
+	Sign in <br />
+	to see your investments
+</div>
