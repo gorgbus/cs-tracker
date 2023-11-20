@@ -29,7 +29,7 @@
 	export let data: PageData;
 </script>
 
-<div class="max-w-6xl m-auto p-4">
+<div class="w-full max-w-6xl m-auto p-4">
 	<h1 class="text-primary-foreground text-2xl font-semibold py-4">Steam Inventory</h1>
 
 	<Input class="w-96" placeholder="Search" type="text" bind:value={search} />
