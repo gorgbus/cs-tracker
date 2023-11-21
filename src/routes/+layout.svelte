@@ -14,6 +14,15 @@
 	export let data: LayoutServerData;
 </script>
 
+<svelte:head>
+	<title>CS2 Skin Tracker</title>
+
+	<meta property="og:title" content="CS2 Skin Tracker" />
+	<meta property="og:description" content="Site to track value of your CS2 items" />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="/favicon.png" />
+</svelte:head>
+
 <div class="bg-background h-[100vh] overflow-x-hidden overflow-auto">
 	<div class="h-full flex flex-col">
 		<QueryClientProvider client={queryClient}>

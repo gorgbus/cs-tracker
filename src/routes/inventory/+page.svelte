@@ -29,6 +29,10 @@
 	export let data: PageData;
 </script>
 
+<svelte:head>
+	<title>Inventory</title>
+</svelte:head>
+
 <div class="w-full max-w-6xl m-auto p-4">
 	<h1 class="text-primary-foreground text-2xl font-semibold py-4">Steam Inventory</h1>
 

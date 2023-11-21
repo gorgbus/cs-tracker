@@ -47,6 +47,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Investments</title>
+</svelte:head>
+
 <div class="p-8 flex items-center justify-between pb-0">
 	<h1 class="text-primary-foreground text-2xl font-semibold py-4">Your collections</h1>
 
