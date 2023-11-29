@@ -78,10 +78,9 @@
 							<Popover.Trigger class="p-4 flex">
 								<Avatar.Root>
 									<Avatar.Image
-										src={`https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/${data.user.steam.avatar.slice(
-											0,
-											2
-										)}/${data.user.steam.avatar}.jpg`}
+										src={`https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/${
+											data.user.steam.avatar.slice(0, 2) || ""
+										}/${data.user.steam.avatar}.jpg`}
 										alt="steam-avatar"
 									/>
 									<Avatar.Fallback>SA</Avatar.Fallback>
