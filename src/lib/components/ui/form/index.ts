@@ -16,9 +16,11 @@ import RadioGroup from "./form-radio-group.svelte";
 import Select from "./form-select.svelte";
 import SelectTrigger from "./form-select-trigger.svelte";
 import Button from "./form-button.svelte";
+import Combobox from "./form-combobox.svelte";
 
 const Root = FormPrimitive.Root;
 const Field = FormPrimitive.Field;
+const Control = FormPrimitive.Control;
 const RadioItem = RadioGroupComp.Item;
 const NativeRadio = FormPrimitive.Radio;
 const SelectContent = SelectComp.Content;
@@ -34,6 +36,8 @@ export type TextareaGetFormField = Omit<ReturnType<typeof getFormField>, "value"
 export {
 	Root,
 	Field,
+	Control,
+	Combobox,
 	Item,
 	Input,
 	NumberInput,

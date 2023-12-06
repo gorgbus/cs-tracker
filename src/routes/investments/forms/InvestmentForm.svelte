@@ -15,10 +15,11 @@
 		</Form.Item>
 	</Form.Field>
 
-	<Form.Field {config} name="market_hash_name">
+	<Form.Field {config} name="market_hash_name" let:setValue let:value>
 		<Form.Item>
 			<Form.Label>Name</Form.Label>
-			<Form.Input />
+			<!-- <Form.Input /> -->
+			<Form.Combobox {value} {setValue} />
 			<Form.Description>market hash name of the item</Form.Description>
 			<Form.Validation />
 		</Form.Item>

@@ -6,7 +6,7 @@
 	import { fetch_prices, type InvestmentType } from "./investment";
 	import * as Table from "$lib/components/ui/table";
 	import Gain from "./Gain.svelte";
-	import Img from "./Img.svelte";
+	import Img from "$lib/components/Img.svelte";
 	import CollTableActions from "./CollTableActions.svelte";
 	import { getContext } from "svelte";
 	import { addTableFilter } from "svelte-headless-table/plugins";
