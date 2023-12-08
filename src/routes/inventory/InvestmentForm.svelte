@@ -1,17 +1,21 @@
 <script lang="ts">
 	import * as Form from "$lib/components/ui/form";
 	import * as Dialog from "$lib/components/ui/dialog";
+	import { Loader2 } from "lucide-svelte";
 	import { formSchema, type FormSchema } from "./schema";
 	import type { SuperValidated } from "sveltekit-superforms";
 	import type { Collection } from "../investments/investment";
 	import type { Item } from "$lib";
 
+	export let close_form: () => void;
 	export let collections: Collection[];
 	export let item: Item;
 	export let form: SuperValidated<FormSchema>;
 </script>
 
-<Form.Root method="POST" {form} schema={formSchema} let:config>
+<Form.Root method="POST" {form} schema={formSchema} let:config let:message let:submitting>
+	{@const _ = message?.type === "success" && close_form()}
+
 	<Form.Field {config} name="market_hash_name">
 		<Form.Item>
 			<Form.Label>Name</Form.Label>
@@ -72,6 +76,12 @@
 	</Form.Field>
 
 	<Dialog.Footer>
-		<Form.Button>Add</Form.Button>
+		<Form.Button>
+			{#if submitting}
+				<Loader2 class="animate-spin" />
+			{:else}
+				Add
+			{/if}
+		</Form.Button>
 	</Dialog.Footer>
 </Form.Root>

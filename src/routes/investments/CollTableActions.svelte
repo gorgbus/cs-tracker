@@ -9,11 +9,11 @@
 	import type { PageData } from "./$types";
 	import EditInvestmentForm from "./forms/EditInvestmentForm.svelte";
 	import type { InvestmentType } from "./investment";
-	import { superForm } from "sveltekit-superforms/client";
 
 	export let investment: InvestmentType;
 
 	let open_remove = false;
+	let open_edit = false;
 
 	const query_client = useQueryClient();
 
@@ -29,19 +29,17 @@
 		}
 	};
 
-	export let data: PageData;
+	const close_form = () => {
+		open_edit = false;
 
-	const { message } = superForm(data.inv_edit_form);
-
-	$: if ($message?.type === "success") {
 		(async () => {
 			await query_client.invalidateQueries({
 				queryKey: ["investments", investment.collection]
 			});
-
-			$message = undefined;
 		})();
-	}
+	};
+
+	export let data: PageData;
 </script>
 
 <AlertDialog.Root bind:open={open_remove}>
@@ -59,7 +57,7 @@
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
-<Dialog.Root open={data.inv_edit_form.posted && false}>
+<Dialog.Root bind:open={open_edit}>
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger asChild let:builder>
 			<Button variant="ghost" builders={[builder]} size="icon" class="relative w-8 h-8 p-0">
@@ -87,6 +85,6 @@
 			<Dialog.Description>Edit <strong>{investment.item}</strong></Dialog.Description>
 		</Dialog.Header>
 
-		<EditInvestmentForm form={data.inv_edit_form} {investment} />
+		<EditInvestmentForm form={data.inv_edit_form} {investment} {close_form} />
 	</Dialog.Content>
 </Dialog.Root>

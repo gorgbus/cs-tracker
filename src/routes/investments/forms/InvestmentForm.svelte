@@ -1,14 +1,26 @@
 <script lang="ts">
 	import * as Form from "$lib/components/ui/form";
 	import * as Dialog from "$lib/components/ui/dialog";
+	import { Loader2 } from "lucide-svelte";
 	import { invFormSchema, type InvFormSchema } from "../schema";
 	import type { SuperValidated } from "sveltekit-superforms";
 
+	export let close_form: () => void;
 	export let col_id: number;
 	export let form: SuperValidated<InvFormSchema>;
 </script>
 
-<Form.Root method="POST" action={`?/inv_create`} {form} schema={invFormSchema} let:config>
+<Form.Root
+	method="POST"
+	action={`?/inv_create`}
+	{form}
+	schema={invFormSchema}
+	let:config
+	let:message
+	let:submitting
+>
+	{@const _ = message?.type === "success" && close_form()}
+
 	<Form.Field {config} name="col_id">
 		<Form.Item class="hidden">
 			<Form.NumberInput prefill={col_id} />
@@ -60,6 +72,12 @@
 	</Form.Field>
 
 	<Dialog.Footer>
-		<Form.Button>Add</Form.Button>
+		<Form.Button>
+			{#if submitting}
+				<Loader2 class="animate-spin" />
+			{:else}
+				Add
+			{/if}
+		</Form.Button>
 	</Dialog.Footer>
 </Form.Root>

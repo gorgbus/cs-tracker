@@ -1,4 +1,4 @@
-import type { Handle } from "@sveltejs/kit";
+import { redirect, type Handle } from "@sveltejs/kit";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 import set_cookie_parser from "set-cookie-parser";
@@ -25,6 +25,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 		const access = jwt.verify(access_token, JWT_DECODE_KEY) as Jwt;
 
 		event.locals.user = access.user;
+
+		if (event.url.pathname === "/") throw redirect(303, "/investments");
 	} else if (refresh_token) {
 		try {
 			const { headers } = await axios.post(
@@ -51,19 +53,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 					event.locals.user = access.user;
 				}
 			}
+
+			if (event.url.pathname === "/") throw redirect(303, "/investments");
 		} catch (e) {
-			console.error("failed to get jwt", e);
+			// console.error("failed to get jwt", e);
 		}
 	} else {
 		event.locals.user = undefined;
 
 		if (event.url.pathname === "/investments" || event.url.pathname === "/inventory")
-			return new Response(null, {
-				status: 303,
-				headers: {
-					location: "/"
-				}
-			});
+			throw redirect(303, "/");
 	}
 
 	return await resolve(event);

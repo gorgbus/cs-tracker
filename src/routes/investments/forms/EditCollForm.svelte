@@ -1,15 +1,27 @@
 <script lang="ts">
 	import * as Form from "$lib/components/ui/form";
 	import * as Dialog from "$lib/components/ui/dialog";
+	import { Loader2 } from "lucide-svelte";
 	import { collEditFormSchema, type CollEditFormSchema } from "../schema";
 	import type { SuperValidated } from "sveltekit-superforms";
 	import type { Collection } from "../investment";
 
+	export let close_form: () => void;
 	export let form: SuperValidated<CollEditFormSchema>;
 	export let coll: Collection;
 </script>
 
-<Form.Root method="POST" action="?/coll_rename" {form} schema={collEditFormSchema} let:config>
+<Form.Root
+	method="POST"
+	action="?/coll_rename"
+	{form}
+	schema={collEditFormSchema}
+	let:config
+	let:message
+	let:submitting
+>
+	{@const _ = message?.type === "success" && close_form()}
+
 	<Form.Field {config} name="col_id">
 		<Form.Item class="hidden">
 			<Form.NumberInput prefill={coll.col_id} />
@@ -26,6 +38,12 @@
 	</Form.Field>
 
 	<Dialog.Footer>
-		<Form.Button>Rename</Form.Button>
+		<Form.Button>
+			{#if submitting}
+				<Loader2 class="animate-spin" />
+			{:else}
+				Rename
+			{/if}
+		</Form.Button>
 	</Dialog.Footer>
 </Form.Root>

@@ -5,6 +5,7 @@
 	import { Input } from "$lib/components/ui/input";
 	import * as Dialog from "$lib/components/ui/dialog";
 	import InvestmentForm from "./InvestmentForm.svelte";
+	import type { Item as ItemType } from "$lib";
 	import type { PageData } from "./$types";
 	import { fetch_collections } from "../investments/investment";
 
@@ -25,6 +26,10 @@
 	const collections_query = useQuery("collections", fetch_collections);
 
 	let search: string = "";
+	let open = false;
+	let curr_item: ItemType;
+
+	const close_form = () => (open = false);
 
 	export let data: PageData;
 </script>
@@ -46,25 +51,13 @@
 				{#each $query_result.data.items.filter((i) => i.market_hash_name
 						.toLowerCase()
 						.includes(search.toLowerCase())) as item}
-					<Dialog.Root open={data.form.posted && false}>
-						<Dialog.Trigger>
-							<Item {item} />
-						</Dialog.Trigger>
-						<Dialog.Content class="border-input">
-							<Dialog.Header>
-								<Dialog.Title>New investment</Dialog.Title>
-								<Dialog.Description>Add a new investment</Dialog.Description>
-							</Dialog.Header>
-
-							{#if $collections_query.isSuccess}
-								<InvestmentForm
-									{item}
-									form={data.form}
-									collections={$collections_query.data.collections}
-								/>
-							{/if}
-						</Dialog.Content>
-					</Dialog.Root>
+					<Item
+						{item}
+						on:click={() => {
+							open = true;
+							curr_item = item;
+						}}
+					/>
 				{/each}
 			</div>
 		{:else if $query_result.isLoading}
@@ -83,3 +76,22 @@
 		{/if}
 	</div>
 </div>
+
+<Dialog.Root bind:open>
+	<Dialog.Trigger />
+	<Dialog.Content class="border-input">
+		<Dialog.Header>
+			<Dialog.Title>New investment</Dialog.Title>
+			<Dialog.Description>Add a new investment</Dialog.Description>
+		</Dialog.Header>
+
+		{#if $collections_query.isSuccess}
+			<InvestmentForm
+				{close_form}
+				item={curr_item}
+				form={data.form}
+				collections={$collections_query.data.collections}
+			/>
+		{/if}
+	</Dialog.Content>
+</Dialog.Root>

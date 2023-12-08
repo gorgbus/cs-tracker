@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from "./$types";
-import { superValidate } from "sveltekit-superforms/server";
+import { message, superValidate } from "sveltekit-superforms/server";
 import { formSchema } from "./schema";
-import { fail, redirect } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 import axios from "axios";
 import { PUBLIC_API_URL } from "$env/static/public";
 
@@ -37,6 +37,9 @@ export const actions: Actions = {
 			});
 		}
 
-		throw redirect(303, "/inventory");
+		return message(form, {
+			type: "success",
+			text: "success"
+		});
 	}
 };

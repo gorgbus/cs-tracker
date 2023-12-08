@@ -16,7 +16,6 @@
 	import type { PageData } from "./$types";
 	import InvestmentForm from "./forms/InvestmentForm.svelte";
 	import { useQueryClient } from "@sveltestack/svelte-query";
-	import { superForm } from "sveltekit-superforms/client";
 
 	export let collection: Collection;
 
@@ -82,21 +81,21 @@
 
 	const query_client = useQueryClient();
 
-	const { message } = superForm(data.inv_form);
+	let open = false;
 
-	$: if ($message?.type === "success") {
+	const close_form = () => {
+		open = false;
+
 		(async () => {
 			await query_client.invalidateQueries({
 				queryKey: ["investments", collection.col_id]
 			});
-
-			$message = undefined;
 		})();
-	}
+	};
 </script>
 
 <div class="flex items-center justify-end">
-	<Dialog.Root open={data.inv_form.posted && false}>
+	<Dialog.Root bind:open>
 		<Dialog.Trigger class={cn(buttonVariants({ variant: "outline" }), "mx-2")}
 			>New investment</Dialog.Trigger
 		>
@@ -106,7 +105,7 @@
 				<Dialog.Description>Add a new investment</Dialog.Description>
 			</Dialog.Header>
 
-			<InvestmentForm form={data.inv_form} col_id={collection.col_id} />
+			<InvestmentForm form={data.inv_form} col_id={collection.col_id} {close_form} />
 		</Dialog.Content>
 	</Dialog.Root>
 </div>

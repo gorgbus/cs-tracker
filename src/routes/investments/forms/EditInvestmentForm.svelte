@@ -1,10 +1,12 @@
 <script lang="ts">
 	import * as Form from "$lib/components/ui/form";
 	import * as Dialog from "$lib/components/ui/dialog";
+	import { Loader2 } from "lucide-svelte";
 	import { invEditFormSchema, type InvEditFormSchema } from "../schema";
 	import type { SuperValidated } from "sveltekit-superforms";
 	import { get_currency_symbol, type InvestmentType } from "../investment";
 
+	export let close_form: () => void;
 	export let investment: InvestmentType;
 	export let form: SuperValidated<InvEditFormSchema>;
 
@@ -15,7 +17,17 @@
 	};
 </script>
 
-<Form.Root method="POST" action={`?/inv_edit`} {form} schema={invEditFormSchema} let:config>
+<Form.Root
+	method="POST"
+	action={`?/inv_edit`}
+	{form}
+	schema={invEditFormSchema}
+	let:config
+	let:message
+	let:submitting
+>
+	{@const _ = message?.type === "success" && close_form()}
+
 	<Form.Field {config} name="inv_id">
 		<Form.Item class="hidden">
 			<Form.NumberInput prefill={investment.inv_id} />
@@ -65,6 +77,12 @@
 	</Form.Field>
 
 	<Dialog.Footer>
-		<Form.Button>Edit</Form.Button>
+		<Form.Button>
+			{#if submitting}
+				<Loader2 class="animate-spin" />
+			{:else}
+				Edit
+			{/if}
+		</Form.Button>
 	</Dialog.Footer>
 </Form.Root>
