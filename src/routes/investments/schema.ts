@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Currencies } from "./investment";
+import { Currencies } from "$lib";
 
 export const invFormSchema = z.object({
 	col_id: z.number().min(1),

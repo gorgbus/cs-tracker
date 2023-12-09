@@ -1,10 +1,4 @@
-import { axios_client } from "$lib";
-
-export enum Currencies {
-	USD = "USD",
-	EUR = "EUR",
-	CNY = "CNY"
-}
+import { Currencies, axios_client } from "$lib";
 
 export type InvestmentType = {
 	inv_id: number;

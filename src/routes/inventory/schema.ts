@@ -1,3 +1,4 @@
+import { Currencies } from "$lib";
 import { z } from "zod";
 
 export const formSchema = z.object({
@@ -5,7 +6,7 @@ export const formSchema = z.object({
 	cost: z.number().min(0.01),
 	amount: z.number().min(1),
 	col_id: z.number().min(1),
-	currency: z.enum(["USD", "EUR", "CNY"])
+	currency: z.nativeEnum(Currencies)
 });
 
 export type FormSchema = typeof formSchema;

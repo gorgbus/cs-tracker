@@ -5,7 +5,14 @@
 	import Decimal from "decimal.js";
 	import { getContext } from "svelte";
 	import type { Writable } from "svelte/store";
-	import { axios_client, format_price } from "$lib";
+	import {
+		axios_client,
+		format_price,
+		get_latest_price,
+		Currencies,
+		type Rates,
+		convert_price
+	} from "$lib";
 
 	export let percent = false;
 	export let total = false;
@@ -20,10 +27,7 @@
 	});
 
 	const ex_rate_query = useQuery("exchange_rates", async () => {
-		const { data } = await axios_client.get<{
-			EUR: number;
-			CNY: number;
-		}>("/api/currencies");
+		const { data } = await axios_client.get<Rates>("/api/currencies");
 
 		return data;
 	});
@@ -58,24 +62,16 @@
 	};
 
 	const calc_perc_gain = (amount: number, latest_price: number, cost: number) => {
-		const current_worth = calc_curr_worth(amount, convert_price(latest_price, item.currency));
+		const current_worth = calc_curr_worth(
+			amount,
+			convert_price(latest_price, item.currency, $ex_rate_query.data!)
+		);
 		const total_cost = calc_total_cost(amount, cost);
 
 		return current_worth.minus(total_cost).div(total_cost).mul(100).round().toNumber();
 	};
 
-	const convert_price = (price: number, currency: "USD" | "EUR" | "CNY") => {
-		switch (currency) {
-			case "USD":
-				return price;
-			case "EUR":
-				return new Decimal(price).mul($ex_rate_query.data?.EUR!).toDecimalPlaces(2).toNumber();
-			case "CNY":
-				return new Decimal(price).mul($ex_rate_query.data?.CNY!).toDecimalPlaces(2).toNumber();
-		}
-	};
-
-	const convert_to_usd = (price: number, currency: "USD" | "EUR" | "CNY") => {
+	const convert_to_usd = (price: number, currency: Currencies) => {
 		switch (currency) {
 			case "USD":
 				return price;
@@ -84,9 +80,11 @@
 			case "CNY":
 				return new Decimal(price).div($ex_rate_query.data?.CNY!).toDecimalPlaces(2).toNumber();
 		}
+
+		return 0;
 	};
 
-	let currency = getContext<Writable<"USD" | "EUR" | "CNY">>("selected_currency");
+	let currency = getContext<Writable<Currencies>>("selected_currency");
 	let market = getContext<Writable<"steam" | "buff163" | "skinport">>("selected_market");
 
 	const update_wrapper = (update: string, amount: number, latest_price = 0, cost = 0) => {
@@ -94,27 +92,41 @@
 			case "total_cost": {
 				const converted_cost = convert_to_usd(cost, item.currency);
 
-				update_items(update, calc_total_cost(amount, convert_price(converted_cost, $currency)));
+				update_items(
+					update,
+					calc_total_cost(amount, convert_price(converted_cost, $currency, $ex_rate_query.data!))
+				);
 
 				return calc_total_cost(amount, cost);
 			}
 			case "current_worth": {
-				const converted_latest_price = convert_price(latest_price, $currency);
+				const converted_latest_price = convert_price(latest_price, $currency, $ex_rate_query.data!);
 
 				update_items(update, calc_curr_worth(amount, converted_latest_price).toNumber());
 
-				return calc_curr_worth(amount, convert_price(latest_price, item.currency)).toNumber();
+				return calc_curr_worth(
+					amount,
+					convert_price(latest_price, item.currency, $ex_rate_query.data!)
+				).toNumber();
 			}
 			case "profit": {
-				const converted_latest_price = convert_price(latest_price, $currency);
+				const converted_latest_price = convert_price(latest_price, $currency, $ex_rate_query.data!);
 				const converted_cost = convert_to_usd(cost, item.currency);
 
 				update_items(
 					update,
-					calc_gain(amount, converted_latest_price, convert_price(converted_cost, $currency))
+					calc_gain(
+						amount,
+						converted_latest_price,
+						convert_price(converted_cost, $currency, $ex_rate_query.data!)
+					)
 				);
 
-				return calc_gain(amount, convert_price(latest_price, item.currency), cost);
+				return calc_gain(
+					amount,
+					convert_price(latest_price, item.currency, $ex_rate_query.data!),
+					cost
+				);
 			}
 		}
 
@@ -126,29 +138,7 @@
 	$: {
 		const sel_market = $query_result.isSuccess && ($query_result.data[$market] as any);
 
-		if (sel_market)
-			switch ($market) {
-				case "steam": {
-					latest_price =
-						sel_market.last_24h ||
-						sel_market.last_7d ||
-						sel_market.last_30d ||
-						sel_market.last_90d ||
-						0;
-
-					break;
-				}
-				case "buff163": {
-					latest_price = sel_market.starting_at?.price || 0;
-
-					break;
-				}
-				case "skinport": {
-					latest_price = sel_market.starting_at || 0;
-
-					break;
-				}
-			}
+		if (sel_market) latest_price = get_latest_price(sel_market, $market);
 		else latest_price = 0;
 	}
 </script>

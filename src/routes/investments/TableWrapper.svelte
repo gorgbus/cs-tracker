@@ -6,7 +6,7 @@
 	import Input from "$lib/components/ui/input/input.svelte";
 	import * as Select from "$lib/components/ui/select";
 	import * as Dialog from "$lib/components/ui/dialog";
-	import { format_price } from "$lib";
+	import { Currencies, Market, format_price } from "$lib";
 	import steam from "$lib/assets/steam.png";
 	import buff163 from "$lib/assets/buff163.png";
 	import skinport from "$lib/assets/skinport.webp";
@@ -19,8 +19,8 @@
 
 	export let collection: Collection;
 
-	let currency: { value: "USD" | "EUR" | "CNY"; label: string; disabled: boolean } = {
-		value: "EUR",
+	let currency: { value: Currencies; label: string; disabled: boolean } = {
+		value: Currencies.EUR,
 		label: "€",
 		disabled: false
 	};
@@ -30,8 +30,8 @@
 
 	setContext("selected_currency", selected_currency);
 
-	let market: { value: "steam" | "buff163" | "skinport"; label: string; disabled: boolean } = {
-		value: "steam",
+	let market: { value: Market; label: string; disabled: boolean } = {
+		value: Market.STEAM,
 		label: "Steam",
 		disabled: false
 	};
@@ -153,9 +153,9 @@
 				</Select.Trigger>
 			</div>
 			<Select.Content class="border-input">
-				<Select.Item value="USD">$</Select.Item>
-				<Select.Item value="EUR">€</Select.Item>
-				<Select.Item value="CNY">¥</Select.Item>
+				<Select.Item value={Currencies.USD}>$</Select.Item>
+				<Select.Item value={Currencies.EUR}>€</Select.Item>
+				<Select.Item value={Currencies.CNY}>¥</Select.Item>
 			</Select.Content>
 		</Select.Root>
 
@@ -166,19 +166,19 @@
 				</Select.Trigger>
 			</div>
 			<Select.Content class="border-input">
-				<Select.Item value="steam">
+				<Select.Item value={Market.STEAM}>
 					<div class="flex items-center">
 						<img class="mr-2" height="16" width="16" src={steam} alt="steam-icon" />
 						Steam
 					</div>
 				</Select.Item>
-				<Select.Item value="buff163">
+				<Select.Item value={Market.BUFF163}>
 					<div class="flex items-center">
 						<img class="mr-2" height="16" width="16" src={buff163} alt="buff-icon" />
 						Buff163
 					</div>
 				</Select.Item>
-				<Select.Item value="skinport">
+				<Select.Item value={Market.SKINPORT}>
 					<div class="flex items-center">
 						<img class="mr-2" height="16" width="16" src={skinport} alt="skinport-icon" />
 						Skinport

@@ -4,10 +4,14 @@
 	import Item from "./Item.svelte";
 	import { Input } from "$lib/components/ui/input";
 	import * as Dialog from "$lib/components/ui/dialog";
+	import * as Select from "$lib/components/ui/select";
 	import InvestmentForm from "./InvestmentForm.svelte";
-	import type { Item as ItemType } from "$lib";
+	import { type Item as ItemType, Currencies, Market } from "$lib";
 	import type { PageData } from "./$types";
 	import { fetch_collections } from "../investments/investment";
+	import steam from "$lib/assets/steam.png";
+	import buff163 from "$lib/assets/buff163.png";
+	import skinport from "$lib/assets/skinport.webp";
 
 	const query_result = useQuery<Inventory, Error>(
 		"inventory",
@@ -25,6 +29,18 @@
 
 	const collections_query = useQuery("collections", fetch_collections);
 
+	let currency: { value: Currencies; label: string; disabled: boolean } = {
+		value: Currencies.EUR,
+		label: "€",
+		disabled: false
+	};
+
+	let market: { value: Market; label: string; disabled: boolean } = {
+		value: Market.STEAM,
+		label: "Steam",
+		disabled: false
+	};
+
 	let search: string = "";
 	let open = false;
 	let curr_item: ItemType;
@@ -39,9 +55,58 @@
 </svelte:head>
 
 <div class="w-full max-w-6xl m-auto p-4">
-	<h1 class="text-primary-foreground text-2xl font-semibold py-4">Steam Inventory</h1>
+	<h1 class="text-primary-foreground text-2xl font-semibold py-4">
+		Steam Inventory {#if $query_result.isSuccess}
+			({$query_result.data.total_inventory_count})
+		{/if}
+	</h1>
 
-	<Input class="w-96" placeholder="Search" type="text" bind:value={search} />
+	<div class="flex items-center justify-between">
+		<Input class="w-96" placeholder="Search" type="text" bind:value={search} />
+
+		<div class="flex">
+			<Select.Root bind:selected={currency}>
+				<div class="inline-block">
+					<Select.Trigger class="w-20 mr-2 focus:outline-accent">
+						<Select.Value placeholder="$" />
+					</Select.Trigger>
+				</div>
+				<Select.Content class="border-input">
+					<Select.Item value={Currencies.USD}>$</Select.Item>
+					<Select.Item value={Currencies.EUR}>€</Select.Item>
+					<Select.Item value={Currencies.CNY}>¥</Select.Item>
+				</Select.Content>
+			</Select.Root>
+
+			<Select.Root bind:selected={market}>
+				<div class="inline-block">
+					<Select.Trigger class="w-40 focus:outline-accent">
+						<Select.Value placeholder="Steam" />
+					</Select.Trigger>
+				</div>
+				<Select.Content class="border-input">
+					<Select.Item value={Market.STEAM}>
+						<div class="flex items-center">
+							<img class="mr-2" height="16" width="16" src={steam} alt="steam-icon" />
+							Steam
+						</div>
+					</Select.Item>
+					<Select.Item value={Market.BUFF163}>
+						<div class="flex items-center">
+							<img class="mr-2" height="16" width="16" src={buff163} alt="buff-icon" />
+							Buff163
+						</div>
+					</Select.Item>
+					<Select.Item value={Market.SKINPORT}>
+						<div class="flex items-center">
+							<img class="mr-2" height="16" width="16" src={skinport} alt="skinport-icon" />
+							Skinport
+						</div>
+					</Select.Item>
+				</Select.Content>
+			</Select.Root>
+		</div>
+	</div>
 
 	<div
 		class="overflow-auto overflow-x-hidden max-h-[1152px] min-h-[700px] bg-secondary/30 p-4 rounded-xl mt-4"
@@ -53,6 +118,8 @@
 						.includes(search.toLowerCase())) as item}
 					<Item
 						{item}
+						market={market.value}
+						currency={currency.value}
 						on:click={() => {
 							open = true;
 							curr_item = item;
