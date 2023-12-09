@@ -75,21 +75,23 @@ export const get_latest_price = (item_prices: any, sel_market: string) => {
 	let latest_price = 0;
 	let prices = item_prices[sel_market];
 
-	switch (sel_market) {
-		case "steam": {
-			latest_price = prices.last_24h || prices.last_7d || prices.last_30d || prices.last_90d || 0;
+	if (prices) {
+		switch (sel_market) {
+			case "steam": {
+				latest_price = prices.last_24h || prices.last_7d || prices.last_30d || prices.last_90d || 0;
 
-			break;
-		}
-		case "buff163": {
-			latest_price = prices.starting_at?.price || 0;
+				break;
+			}
+			case "buff163": {
+				latest_price = prices.starting_at?.price || 0;
 
-			break;
-		}
-		case "skinport": {
-			latest_price = prices.starting_at || 0;
+				break;
+			}
+			case "skinport": {
+				latest_price = prices.starting_at || 0;
 
-			break;
+				break;
+			}
 		}
 	}
 

@@ -138,7 +138,7 @@
 	$: {
 		const sel_market = $query_result.isSuccess && ($query_result.data[$market] as any);
 
-		if (sel_market) latest_price = get_latest_price(sel_market, $market);
+		if (sel_market) latest_price = get_latest_price($query_result.data, $market);
 		else latest_price = 0;
 	}
 </script>
