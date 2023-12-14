@@ -46,7 +46,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 				});
 
 				if (name === "access") {
-					const access = jwt.verify(value, JWT_DECODE_KEY) as Jwt;
+					const access = jwt.verify(value, JWT_PUBLIC_KEY) as Jwt;
 
 					event.locals.user = access.user;
 				}
