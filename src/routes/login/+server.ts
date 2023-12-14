@@ -7,7 +7,7 @@ import set_cookie_parser from "set-cookie-parser";
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	try {
 		const { headers } = await axios.post(
-			`${PUBLIC_AUTH_URL}/auth/${PUBLIC_APP_ID}/token`,
+			`${PUBLIC_AUTH_URL}/api/auth/${PUBLIC_APP_ID}/token`,
 			{
 				code: url.searchParams.get("code")
 			},

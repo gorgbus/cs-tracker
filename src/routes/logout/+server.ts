@@ -8,7 +8,7 @@ export const GET: RequestHandler = async ({ cookies }) => {
 		const refresh = cookies.get("refresh");
 
 		await axios.post(
-			`${PUBLIC_AUTH_URL}/auth/${PUBLIC_APP_ID}/logout`,
+			`${PUBLIC_AUTH_URL}/api/auth/${PUBLIC_APP_ID}/logout`,
 			{},
 			{
 				headers: {

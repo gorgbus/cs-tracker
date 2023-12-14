@@ -103,7 +103,7 @@
 					{:else}
 						<a
 							class="inline-block align-top p-4"
-							href={`${PUBLIC_AUTH_URL}/auth/steam/${PUBLIC_APP_ID}/?redirect_uri=${PUBLIC_REDIR_URI}`}
+							href={`${PUBLIC_AUTH_URL}/api/auth/steam/${PUBLIC_APP_ID}/?redirect_uri=${PUBLIC_REDIR_URI}`}
 						>
 							<img
 								src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png"

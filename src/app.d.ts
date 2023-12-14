@@ -5,7 +5,6 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			user?: {
-				user_id: number;
 				steam: {
 					id: string;
 					avatar: string;

@@ -28,7 +28,7 @@ axios_client.interceptors.response.use(
 				config._retry = true;
 
 				await axios.post(
-					`${PUBLIC_AUTH_URL}/auth/${PUBLIC_APP_ID}/token/refresh`,
+					`${PUBLIC_AUTH_URL}/api/auth/${PUBLIC_APP_ID}/token/refresh`,
 					{},
 					{
 						withCredentials: true
