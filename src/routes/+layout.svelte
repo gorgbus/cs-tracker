@@ -60,16 +60,25 @@
 						<li class="float-left">
 							<a
 								href="/inventory"
-								class="inline-block text-center hover:bg-secondary-400 py-2 px-4 rounded ml-4"
+								class="inline-block text-center hover:text-primary-foreground/70 transition-all py-2 px-4 rounded ml-4"
 								>Inventory</a
 							>
 						</li>
 						<li class="float-left">
 							<a
 								href="/investments"
-								class="inline-block text-center hover:bg-secondary-400 py-2 px-4 rounded"
+								class="inline-block text-center hover:text-primary-foreground/70 transition-all py-2 px-4 rounded"
 								>Investments</a
 							>
+						</li>
+						<li class="float-left">
+							<a
+								href="https://github.com/gorgbus/cs-tracker"
+								target="_blank"
+								class="inline-block text-center hover:text-primary-foreground/70 transition-all py-2 px-4 rounded"
+							>
+								Github
+							</a>
 						</li>
 					</ul>
 

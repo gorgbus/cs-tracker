@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { useQuery } from "@sveltestack/svelte-query";
-	import { axios_client, type Inventory } from "$lib";
+	import { useQuery, useQueryClient } from "@sveltestack/svelte-query";
+	import { axios_client, currencies_list, get_currency_symbol, type Inventory } from "$lib";
 	import Item from "./Item.svelte";
 	import { Input } from "$lib/components/ui/input";
 	import * as Dialog from "$lib/components/ui/dialog";
@@ -12,13 +12,33 @@
 	import steam from "$lib/assets/steam.png";
 	import buff163 from "$lib/assets/buff163.png";
 	import skinport from "$lib/assets/skinport.webp";
+	import axios from "axios";
+	import { Button } from "$lib/components/ui/button";
+	import { Loader2 } from "lucide-svelte";
+
+	export let data: PageData;
+
+	let refresh = false;
 
 	const query_result = useQuery<Inventory, Error>(
 		"inventory",
 		async () => {
-			const { data } = await axios_client.get<Inventory>(`/api/inventory`);
+			const { data: inventory_data } = await axios.get(
+				`https://corsproxy.io/?https://www.csbackpack.net/api/inventory?steam_id=${
+					data.user?.steam.id
+				}&sort=recently&language=english${refresh && "&no_cache=1"}`
+			);
 
-			return data;
+			refresh = false;
+
+			const { data: priced_inventory } = await axios_client.post<Inventory>(
+				`/api/inventory/price-check`,
+				{
+					items: inventory_data
+				}
+			);
+
+			return priced_inventory;
 		},
 		{
 			cacheTime: 1000 * 60 * 30,
@@ -31,7 +51,7 @@
 
 	let currency: { value: Currencies; label: string; disabled: boolean } = {
 		value: Currencies.EUR,
-		label: "€",
+		label: get_currency_symbol(Currencies.EUR),
 		disabled: false
 	};
 
@@ -45,9 +65,17 @@
 	let open = false;
 	let curr_item: ItemType;
 
+	const query_client = useQueryClient();
+
 	const close_form = () => (open = false);
 
-	export let data: PageData;
+	const refresh_inventory = async () => {
+		refresh = true;
+
+		query_client.removeQueries("inventory");
+
+		await $query_result.refetch();
+	};
 </script>
 
 <svelte:head>
@@ -55,11 +83,19 @@
 </svelte:head>
 
 <div class="w-full max-w-6xl m-auto p-4">
-	<h1 class="text-primary-foreground text-2xl font-semibold py-4">
-		Steam Inventory {#if $query_result.isSuccess}
-			({$query_result.data.total_inventory_count})
-		{/if}
-	</h1>
+	<div class="flex items-center justify-between">
+		<h1 class="text-primary-foreground text-2xl font-semibold py-4">
+			Steam Inventory {#if $query_result.isSuccess}
+				({$query_result.data.total_inventory_count})
+			{/if}
+		</h1>
+
+		<Button on:click={refresh_inventory} variant="outline"
+			>{#if refresh}
+				<Loader2 class="animate-spin" />
+			{/if} Refresh</Button
+		>
+	</div>
 
 	<div class="flex items-center justify-between">
 		<Input class="w-96" placeholder="Search" type="text" bind:value={search} />
@@ -67,14 +103,14 @@
 		<div class="flex">
 			<Select.Root bind:selected={currency}>
 				<div class="inline-block">
-					<Select.Trigger class="w-20 mr-2 focus:outline-accent">
+					<Select.Trigger class="w-28 mr-2 focus:outline-accent">
 						<Select.Value placeholder="$" />
 					</Select.Trigger>
 				</div>
 				<Select.Content class="border-input">
-					<Select.Item value={Currencies.USD}>$</Select.Item>
-					<Select.Item value={Currencies.EUR}>€</Select.Item>
-					<Select.Item value={Currencies.CNY}>¥</Select.Item>
+					{#each currencies_list as currency}
+						<Select.Item value={currency.value}>{currency.label}</Select.Item>
+					{/each}
 				</Select.Content>
 			</Select.Root>
 

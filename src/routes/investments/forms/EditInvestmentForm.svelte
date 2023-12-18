@@ -4,7 +4,8 @@
 	import { Loader2 } from "lucide-svelte";
 	import { invEditFormSchema, type InvEditFormSchema } from "../schema";
 	import type { SuperValidated } from "sveltekit-superforms";
-	import { get_currency_symbol, type InvestmentType } from "../investment";
+	import type { InvestmentType } from "../investment";
+	import { get_currency_symbol, currencies_list } from "$lib";
 
 	export let close_form: () => void;
 	export let investment: InvestmentType;
@@ -66,9 +67,9 @@
 			<Form.Select bind:selected prefill={investment.currency}>
 				<Form.SelectTrigger class="focus:outline-accent" placeholder="Select a currency" />
 				<Form.SelectContent class="border-input">
-					<Form.SelectItem value="USD">$</Form.SelectItem>
-					<Form.SelectItem value="EUR">€</Form.SelectItem>
-					<Form.SelectItem value="CNY">¥</Form.SelectItem>
+					{#each currencies_list as currency}
+						<Form.SelectItem value={currency.value}>{currency.label}</Form.SelectItem>
+					{/each}
 				</Form.SelectContent>
 			</Form.Select>
 			<Form.Description>the currency in which you purchased the item</Form.Description>

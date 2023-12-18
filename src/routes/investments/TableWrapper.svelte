@@ -6,7 +6,7 @@
 	import Input from "$lib/components/ui/input/input.svelte";
 	import * as Select from "$lib/components/ui/select";
 	import * as Dialog from "$lib/components/ui/dialog";
-	import { Currencies, Market, format_price } from "$lib";
+	import { Currencies, Market, currencies_list, format_price, get_currency_symbol } from "$lib";
 	import steam from "$lib/assets/steam.png";
 	import buff163 from "$lib/assets/buff163.png";
 	import skinport from "$lib/assets/skinport.webp";
@@ -21,7 +21,7 @@
 
 	let currency: { value: Currencies; label: string; disabled: boolean } = {
 		value: Currencies.EUR,
-		label: "€",
+		label: get_currency_symbol(Currencies.EUR),
 		disabled: false
 	};
 
@@ -127,7 +127,9 @@
 			Current worth:
 			<span
 				class={`font-normal ${
-					summary.current_worth.toNumber() > 0 ? "text-green-500" : "text-red-500"
+					summary.current_worth.toNumber() >= summary.total_cost.toNumber()
+						? "text-green-500"
+						: "text-red-500"
 				}`}
 			>
 				{format_price(summary.current_worth.toNumber(), currency.value)}
@@ -148,14 +150,14 @@
 	<div class="flex">
 		<Select.Root bind:selected={currency}>
 			<div class="inline-block">
-				<Select.Trigger class="w-20 mr-2 focus:outline-accent">
+				<Select.Trigger class="w-28 mr-2 focus:outline-accent">
 					<Select.Value placeholder="$" />
 				</Select.Trigger>
 			</div>
 			<Select.Content class="border-input">
-				<Select.Item value={Currencies.USD}>$</Select.Item>
-				<Select.Item value={Currencies.EUR}>€</Select.Item>
-				<Select.Item value={Currencies.CNY}>¥</Select.Item>
+				{#each currencies_list as currency}
+					<Select.Item value={currency.value}>{currency.label}</Select.Item>
+				{/each}
 			</Select.Content>
 		</Select.Root>
 

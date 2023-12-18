@@ -1,6 +1,7 @@
 import { PUBLIC_API_URL, PUBLIC_APP_ID, PUBLIC_AUTH_URL } from "$env/static/public";
 import axios from "axios";
 import Decimal from "decimal.js";
+import type { Prices } from "../routes/investments/investment";
 
 // place files you want to import through the `$lib` alias in this folder.
 export type Inventory = {
@@ -10,7 +11,8 @@ export type Inventory = {
 
 export type Item = {
 	market_hash_name: string;
-	prices: any;
+	prices: Prices;
+	count: number;
 };
 
 export const axios_client = axios.create({
@@ -48,7 +50,13 @@ axios_client.interceptors.response.use(
 export enum Currencies {
 	USD = "USD",
 	EUR = "EUR",
-	CNY = "CNY"
+	CNY = "CNY",
+	TRY = "TRY",
+	PLN = "PLN",
+	GBP = "GBP",
+	UAH = "UAH",
+	KRW = "KRW",
+	BRL = "BRL"
 }
 
 export enum Market {
@@ -58,12 +66,54 @@ export enum Market {
 }
 
 export type Rates = {
+	USD: number;
 	EUR: number;
 	CNY: number;
+	TRY: number;
+	PLN: number;
+	GBP: number;
+	UAH: number;
+	KRW: number;
+	BRL: number;
 };
 
+export const get_currency_symbol = (currency: Currencies) => {
+	switch (currency) {
+		case Currencies.USD:
+			return "$ USD";
+		case Currencies.EUR:
+			return "€ EUR";
+		case Currencies.CNY:
+			return "¥ CNY";
+		case Currencies.TRY:
+			return "₺ TRY";
+		case Currencies.PLN:
+			return "zł PLN";
+		case Currencies.GBP:
+			return "£ GBP";
+		case Currencies.UAH:
+			return "₴ UAH";
+		case Currencies.KRW:
+			return "₩ KRW";
+		case Currencies.BRL:
+			return "R$ BRL";
+	}
+};
+
+export const currencies_list = [
+	{ label: get_currency_symbol(Currencies.USD), value: "USD" },
+	{ label: get_currency_symbol(Currencies.EUR), value: "EUR" },
+	{ label: get_currency_symbol(Currencies.TRY), value: "TRY" },
+	{ label: get_currency_symbol(Currencies.PLN), value: "PLN" },
+	{ label: get_currency_symbol(Currencies.GBP), value: "GBP" },
+	{ label: get_currency_symbol(Currencies.UAH), value: "UAH" },
+	{ label: get_currency_symbol(Currencies.CNY), value: "CNY" },
+	{ label: get_currency_symbol(Currencies.KRW), value: "KRW" },
+	{ label: get_currency_symbol(Currencies.BRL), value: "BRL" }
+];
+
 export const format_price = (price: number, currency: Currencies) => {
-	const format = Intl.NumberFormat("de-DE", {
+	const format = Intl.NumberFormat(navigator.language, {
 		style: "currency",
 		currency
 	});
@@ -102,11 +152,7 @@ export const convert_price = (price: number, currency: Currencies, rates: Rates)
 	switch (currency) {
 		case "USD":
 			return price;
-		case "EUR":
-			return new Decimal(price).mul(rates.EUR).toDecimalPlaces(2).toNumber();
-		case "CNY":
-			return new Decimal(price).mul(rates.CNY).toDecimalPlaces(2).toNumber();
+		default:
+			return new Decimal(price).mul(rates[currency]).toDecimalPlaces(2).toNumber();
 	}
-
-	return 0;
 };

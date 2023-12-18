@@ -5,7 +5,7 @@
 	import { formSchema, type FormSchema } from "./schema";
 	import type { SuperValidated } from "sveltekit-superforms";
 	import type { Collection } from "../investments/investment";
-	import type { Item } from "$lib";
+	import { currencies_list, type Item } from "$lib";
 
 	export let close_form: () => void;
 	export let collections: Collection[];
@@ -49,9 +49,9 @@
 			<Form.Select>
 				<Form.SelectTrigger class="focus:outline-accent" placeholder="Select currency" />
 				<Form.SelectContent class="border-input">
-					<Form.SelectItem value="USD">$</Form.SelectItem>
-					<Form.SelectItem value="EUR">€</Form.SelectItem>
-					<Form.SelectItem value="CNY">¥</Form.SelectItem>
+					{#each currencies_list as currency}
+						<Form.SelectItem value={currency.value}>{currency.label}</Form.SelectItem>
+					{/each}
 				</Form.SelectContent>
 			</Form.Select>
 			<Form.Description>the currency in which you purchased the item</Form.Description>

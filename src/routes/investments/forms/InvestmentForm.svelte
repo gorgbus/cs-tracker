@@ -4,6 +4,7 @@
 	import { Loader2 } from "lucide-svelte";
 	import { invFormSchema, type InvFormSchema } from "../schema";
 	import type { SuperValidated } from "sveltekit-superforms";
+	import { currencies_list } from "$lib";
 
 	export let close_form: () => void;
 	export let col_id: number;
@@ -40,7 +41,7 @@
 	<Form.Field {config} name="cost">
 		<Form.Item>
 			<Form.Label>Cost</Form.Label>
-			<Form.NumberInput class="hide-arrows" step="0.01" />
+			<Form.NumberInput class="hide-arrows" step="0.01" prefill={0.01} />
 			<Form.Description>cost per each item</Form.Description>
 			<Form.Validation />
 		</Form.Item>
@@ -49,7 +50,7 @@
 	<Form.Field {config} name="amount">
 		<Form.Item>
 			<Form.Label>Amount</Form.Label>
-			<Form.NumberInput class="hide-arrows" />
+			<Form.NumberInput class="hide-arrows" prefill={1} />
 			<Form.Description>amount of items you want to add</Form.Description>
 			<Form.Validation />
 		</Form.Item>
@@ -61,9 +62,9 @@
 			<Form.Select>
 				<Form.SelectTrigger class="focus:outline-accent" placeholder="Select a currency" />
 				<Form.SelectContent class="border-input">
-					<Form.SelectItem value="USD">$</Form.SelectItem>
-					<Form.SelectItem value="EUR">€</Form.SelectItem>
-					<Form.SelectItem value="CNY">¥</Form.SelectItem>
+					{#each currencies_list as currency}
+						<Form.SelectItem value={currency.value}>{currency.label}</Form.SelectItem>
+					{/each}
 				</Form.SelectContent>
 			</Form.Select>
 			<Form.Description>the currency in which you purchased the item</Form.Description>

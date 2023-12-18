@@ -48,7 +48,11 @@
 			<PlusCircle size={36} />
 		</div>
 
-		<span class="absolute bottom-1 left-1 z-0">{price}</span>
+		<span class="font-bold absolute bottom-1 left-2 z-0">{price}</span>
+
+		{#if item.count > 1}
+			<span class="font-bold absolute top-1 right-2 z-0">{item.count}x</span>
+		{/if}
 
 		<Img market_hash_name={item.market_hash_name} lg />
 	</div>

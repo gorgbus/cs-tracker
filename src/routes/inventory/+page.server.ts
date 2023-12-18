@@ -5,9 +5,10 @@ import { fail } from "@sveltejs/kit";
 import axios from "axios";
 import { PUBLIC_API_URL } from "$env/static/public";
 
-export const load: PageServerLoad = () => {
+export const load: PageServerLoad = ({ locals }) => {
 	return {
-		form: superValidate(formSchema)
+		form: superValidate(formSchema),
+		user: locals.user
 	};
 };
 
